@@ -1,12 +1,246 @@
 ﻿<Window x:Class="CybersecurityAssistant.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CybersecurityAssistant"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Cybersecurity Task Assistant" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Styles -->
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="5" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2980B9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TaskItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+
+        <Style x:Key="QuizButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="Background" Value="#E74C3C"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#C0392B"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#34495E" Padding="20">
+            <TextBlock Text="Cybersecurity Task Assistant" 
+                      FontSize="24" FontWeight="Bold" 
+                      Foreground="White" 
+                      HorizontalAlignment="Center"/>
+        </Border>
+
+        <!-- Main Content -->
+        <TabControl Grid.Row="1" Margin="10">
+
+            <!-- Chat Tab -->
+            <TabItem Header="Chat Assistant">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Chat Display -->
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" 
+                                 Name="ChatScrollViewer" Margin="10">
+                        <StackPanel Name="ChatPanel" Background="White">
+                            <Border Style="{StaticResource TaskItemStyle}" Background="#D5DBDB">
+                                <TextBlock Text="Hello! I'm your cybersecurity assistant. I can help you manage security tasks, set reminders, and test your knowledge. Try saying things like:
+• 'Add task: Enable two-factor authentication'
+• 'Start quiz'
+• 'Show my tasks'
+• 'Set reminder for password update'
+• 'Show action log'"
+                                          TextWrapping="Wrap" FontSize="14"/>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Input Area -->
+                    <Border Grid.Row="1" Background="#ECF0F1" Padding="10" Margin="10,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Name="ChatInput" Grid.Column="0" 
+                                    FontSize="14" Padding="10" 
+                                    BorderThickness="1" BorderBrush="#BDC3C7"
+                                    KeyDown="ChatInput_KeyDown"
+                                    Text="Type your message here..."/>
+
+                            <Button Name="SendButton" Grid.Column="1" 
+                                   Content="Send" Style="{StaticResource ButtonStyle}"
+                                   Click="SendButton_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Quick Actions -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                               HorizontalAlignment="Center" Margin="10">
+                        <Button Content="Show Tasks" Style="{StaticResource ButtonStyle}" 
+                               Click="ShowTasks_Click"/>
+                        <Button Content="Start Quiz" Style="{StaticResource QuizButtonStyle}" 
+                               Click="StartQuiz_Click"/>
+                        <Button Content="Action Log" Style="{StaticResource ButtonStyle}" 
+                               Click="ShowLog_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Tasks Tab -->
+            <TabItem Header="Tasks">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Cybersecurity Tasks" 
+                              Style="{StaticResource HeaderStyle}"/>
+
+                    <!-- Add Task -->
+                    <Grid Grid.Row="1" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Name="NewTaskInput" Grid.Column="0" 
+                                FontSize="14" Padding="8" 
+                                BorderThickness="1" BorderBrush="#BDC3C7"
+                                Text="Enter new cybersecurity task..."/>
+
+                        <Button Name="AddTaskButton" Grid.Column="1" 
+                               Content="Add Task" Style="{StaticResource ButtonStyle}"
+                               Click="AddTask_Click"/>
+                    </Grid>
+
+                    <!-- Tasks List -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="TasksPanel"/>
+                    </ScrollViewer>
+
+                    <!-- Task Stats -->
+                    <Border Grid.Row="3" Background="#ECF0F1" Padding="15" 
+                           CornerRadius="5" Margin="0,10,0,0">
+                        <TextBlock Name="TaskStatsText" FontWeight="Bold" 
+                                  Text="Tasks: 0 Total, 0 Completed"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Quiz Tab -->
+            <TabItem Header="Security Quiz">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Cybersecurity Knowledge Quiz" 
+                              Style="{StaticResource HeaderStyle}"/>
+
+                    <!-- Quiz Content -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="QuizPanel">
+                            <Border Style="{StaticResource TaskItemStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="Test your cybersecurity knowledge!" 
+                                              FontSize="16" FontWeight="Bold" 
+                                              Margin="0,0,0,10"/>
+                                    <TextBlock Text="Click 'Start Quiz' to begin a 5-question cybersecurity quiz. Each correct answer earns you points!"
+                                              TextWrapping="Wrap" Margin="0,0,0,15"/>
+                                    <Button Name="StartQuizButton" Content="Start New Quiz" 
+                                           Style="{StaticResource QuizButtonStyle}"
+                                           Click="StartQuiz_Click" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Quiz Stats -->
+                    <Border Grid.Row="2" Background="#ECF0F1" Padding="15" 
+                           CornerRadius="5" Margin="0,10,0,0">
+                        <TextBlock Name="QuizStatsText" FontWeight="Bold" 
+                                  Text="Quiz Stats: 0 attempts, 0% average score"/>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Action Log Tab -->
+            <TabItem Header="Action Log">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="System Action Log" 
+                              Style="{StaticResource HeaderStyle}"/>
+
+                    <!-- Log Controls -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,15">
+                        <Button Content="Refresh" Style="{StaticResource ButtonStyle}" 
+                               Click="RefreshLog_Click"/>
+                        <Button Content="Clear Log" Style="{StaticResource ButtonStyle}" 
+                               Click="ClearLog_Click" Background="#E74C3C"/>
+                    </StackPanel>
+
+                    <!-- Log Display -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="LogPanel"/>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
